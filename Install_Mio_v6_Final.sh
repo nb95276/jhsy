@@ -14,7 +14,7 @@ BRIGHT_MAGENTA='\033[1;95m'
 NC='\033[0m'
 
 # ==== 版本信息 ====
-SCRIPT_VERSION="2.1.1"
+SCRIPT_VERSION="2.1.2"
 INSTALL_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
 # ==== 输出函数 ====
@@ -393,7 +393,10 @@ echo ""
 read -p "请选择 [1-6]: " choice
 
 case $choice in
-    1) echo "one" ;;
+    1)
+        echo -e "${GREEN}>> 启动 SillyTavern...${NC}"
+        cd "$HOME/SillyTavern" && node server.js
+        ;;
     2) echo "two" ;;
     3) echo "three" ;;
     4) echo "four" ;;
