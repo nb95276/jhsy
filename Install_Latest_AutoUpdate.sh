@@ -212,24 +212,25 @@ MIRROR_SCRIPT_PATH="/tmp/switch_mirror.sh"
 
 # 使用GitHub镜像源下载脚本
 download_success=false
+# 定义一个子脚本的“结束语”作为完整性校验的标志
+SCRIPT_END_MARKER="🎯 任务完成！现在可以享受高速下载了！"
+
 for mirror in "${GITHUB_MIRRORS[@]}"; do
     domain=$(echo "$mirror" | sed 's|https://||' | cut -d'/' -f1)
     full_url="$mirror/$MIRROR_SCRIPT_URL"
 
     log_info "尝试从 $domain 下载镜像源切换脚本..."
 
-    # 使用-o下载到临时文件，而不是直接通过管道执行
     if timeout 15 curl -fsSL --connect-timeout 8 "$full_url" -o "$MIRROR_SCRIPT_PATH" 2>/dev/null; then
-        # 检查文件是否下载成功且内容不为空
         if [ -s "$MIRROR_SCRIPT_PATH" ]; then
-            # 增加一个基本的健全性检查，确认它是一个脚本
-            if head -n 1 "$MIRROR_SCRIPT_PATH" | grep -q -e "^#!" -e "^#"; then
-                log_success "脚��下载成功且验证通过！来源: $domain"
+            # 终极安检：检查文件是否包含“结束语”
+            if grep -q "$SCRIPT_END_MARKER" "$MIRROR_SCRIPT_PATH"; then
+                log_success "脚本下载成功且完整性校验通过！来源: $domain"
                 download_success=true
                 break
             else
-                log_warning "下载的文件不是一个有效的脚本，内容可能已损坏。来源: $domain"
-                rm -f "$MIRROR_SCRIPT_PATH" # 删除损坏的文件
+                log_warning "下载的文件不完整或已损坏。来源: $domain"
+                rm -f "$MIRROR_SCRIPT_PATH"
             fi
         else
             log_warning "下载成功但文件为空。来源: $domain"
