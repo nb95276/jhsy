@@ -393,47 +393,14 @@ echo ""
 read -p "请选择 [1-6]: " choice
 
 case $choice in
-    1)
-        echo -e "${GREEN}>> 启动 SillyTavern...${NC}"
-        cd "$HOME/SillyTavern" && node server.js
-        ;;
-    2)
-        echo -e "${CYAN}>> 更新 SillyTavern...${NC}"
-        cd "$HOME/SillyTavern" || exit 1
-        git pull origin release
-        npm install --no-audit --no-fund --omit=dev
-        echo -e "${GREEN}>> 更新完成！${NC}"
-        ;;
-    3)
-        echo -e "${CYAN}>> 更新GitHub镜像源...${NC}"
-        if [ -f "$HOME/一键更新镜像源.sh" ]; then
-            bash "$HOME/一键更新镜像源.sh"
-        else
-            echo -e "${YELLOW}>> 镜像源更新脚本不存在，请重新下载完整安装包${NC}"
-        fi
-        ;;
-    4)
-        echo -e "${CYAN}>> 查看系统信息:${NC}"
-        echo "Node.js版本: $(node --version 2>/dev/null || echo '未安装')"
-        echo "npm版本: $(npm --version 2>/dev/null || echo '未安装')"
-        echo "Git版本: $(git --version 2>/dev/null || echo '未安装')"
-        echo "SillyTavern目录: $([ -d "$HOME/SillyTavern" ] && echo '存在' || echo '不存在')"
-        ;;
-    5)
-        echo -e "${CYAN}>> 重新安装依赖...${NC}"
-        cd "$HOME/SillyTavern" || exit 1
-        rm -rf node_modules package-lock.json
-        npm install --no-audit --no-fund --omit=dev
-        echo -e "${GREEN}>> 依赖重新安装完成！${NC}"
-        ;;
-    6)
-        echo -e "${YELLOW}>> 再见！感谢使用！${NC}"
-        exit 0
-        ;;
-    *)
-        echo -e "${RED}>> 无效选择${NC}"
-        ;;
-Esac
+    1) echo "one" ;;
+    2) echo "two" ;;
+    3) echo "three" ;;
+    4) echo "four" ;;
+    5) echo "five" ;;
+    6) echo "six" ;;
+    *) echo "invalid" ;;
+esac
 
 echo ""
 read -p "按Enter键返回菜单..."
