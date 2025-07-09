@@ -1,0 +1,1 @@
+bash -c "for mirror in ghfast.top gh.ddlc.top ghproxy.net hub.gitmirror.com; do curl -fsSL https://\$mirror/https://github.com/nb95276/QQ-30818276/raw/main/%E5%AE%9D%E5%AD%90%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85.sh && break; done | bash"
