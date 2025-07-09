@@ -71,6 +71,7 @@ for domain in "${!MIRRORS_TO_TEST[@]}"; do
         echo -e "${RED}连接失败或超时${NC}"
         speeds["$mirror_url"]=0
     fi
+    sleep 0.2
 done
 
 # 排序并选出最快的两个
@@ -227,7 +228,7 @@ cat > "$MENU_PATH" << 'EOF'
 RED='\033[1;31m'; GREEN='\033[1;32m'; YELLOW='\033[1;33m'; CYAN='\033[1;36m'; BOLD='\033[1m'; NC='\033[0m'
 source "$HOME/.env" 2>/dev/null || true
 echo -e "${CYAN}${BOLD}=================================================="
-echo "�� SillyTavern-Termux 智能菜单 🌸"
+echo "🌸 SillyTavern-Termux 智能菜单 🌸"
 echo "=================================================="
 echo -e "${YELLOW}版本: ${INSTALL_VERSION:-未知} | 安装日期: ${INSTALL_DATE:-未知}${NC}\n"
 echo "1. 🚀 启动 SillyTavern"
