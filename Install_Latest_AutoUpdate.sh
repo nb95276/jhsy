@@ -202,146 +202,11 @@ else
     fi
 fi
 
-# ==== 步骤3：强制切换Termux中国镜像源 ====
-show_progress 3 10 "正在强制切换到中国镜像源，告别龟速下载~"
-log_info "下载并运行镜像源切换脚本..."
-
-# 下载镜像源切换脚本
-MIRROR_SCRIPT_URL="nb95276/QQ-30818276/raw/main/强制切换中国镜像源.sh"
-MIRROR_SCRIPT_PATH="/tmp/switch_mirror.sh"
-
-# 使用GitHub镜像源下载脚本
-download_success=false
-# 定义一个子脚本的“结束语”作为完整性校验的标志
-SCRIPT_END_MARKER="🎯 任务完成！现在可以享受高速下载了！"
-
-for mirror in "${GITHUB_MIRRORS[@]}"; do
-    domain=$(echo "$mirror" | sed 's|https://||' | cut -d'/' -f1)
-    full_url="$mirror/$MIRROR_SCRIPT_URL"
-
-    log_info "尝试从 $domain 下载镜像源切换脚本..."
-
-    if timeout 15 curl -fsSL --connect-timeout 8 "$full_url" -o "$MIRROR_SCRIPT_PATH" 2>/dev/null; then
-        if [ -s "$MIRROR_SCRIPT_PATH" ]; then
-            # 终极安检：检查文件是否包含“结束语”
-            if grep -q "$SCRIPT_END_MARKER" "$MIRROR_SCRIPT_PATH"; then
-                log_success "脚本下载成功且完整性校验通过！来源: $domain"
-                download_success=true
-                break
-            else
-                log_warning "下载的文件不完整或已损坏。来源: $domain"
-                rm -f "$MIRROR_SCRIPT_PATH"
-            fi
-        else
-            log_warning "下载成功但文件为空。来源: $domain"
-        fi
-    else
-        log_warning "从 $domain 下载失败或超时。"
-    fi
-done
-
-# 如果下载成功，运行脚本；否则使用内置方法
-if [ "$download_success" = true ]; then
-    log_info "运行专业镜像源切换脚本..."
-    chmod +x "$MIRROR_SCRIPT_PATH"
-
-    # 静默运行镜像源切换（自动选择最佳源）
-    # 使用重定向将 "n" 输入到脚本中，避免交互提示
-    if bash "$MIRROR_SCRIPT_PATH" <<< "n" >/dev/null 2>&1; then
-        log_success "专业镜像源切换完成"
-    else
-        log_warning "专业脚本运行失败，将使用内置方法作为备用方案"
-        download_success=false # 标记为失败，以便执行后续逻辑
-    fi
-
-    # 清理临时脚本文件
-    rm -f "$MIRROR_SCRIPT_PATH"
-fi
-
-# 如果专业脚本下载或运行失败，使用内置镜像源切换方法
-if [ "$download_success" = false ]; then
-    log_info "使用内置方法配置中国镜像源..."
-
-# 中国优质Termux镜像源列表（按速度和稳定性排序）
-TERMUX_MIRRORS=(
-    "mirrors.tuna.tsinghua.edu.cn"
-    "mirrors.aliyun.com"
-    "mirrors.pku.edu.cn"
-    "mirrors.nju.edu.cn"
-    "mirrors.zju.edu.cn"
-    "mirrors.ustc.edu.cn"
-    "mirrors.hit.edu.cn"
-    "mirrors.bfsu.edu.cn"
-)
-
-# 强制设置中国镜像源
-SELECTED_MIRROR=""
-for mirror in "${TERMUX_MIRRORS[@]}"; do
-    log_info "测试镜像源: $mirror"
-
-    # 检查镜像源是否可用
-    if timeout 8 curl -fsSL --connect-timeout 5 "https://$mirror/termux/apt/termux-main/dists/stable/Release" >/dev/null 2>&1; then
-        SELECTED_MIRROR="$mirror"
-        log_success "选择镜像源: $mirror"
-        break
-    else
-        log_warning "$mirror 连接失败，尝试下一个"
-    fi
-done
-
-# 如果没有找到可用的中国镜像源，使用默认源
-if [ -z "$SELECTED_MIRROR" ]; then
-    log_warning "所有中国镜像源都无法连接，使用默认源"
-    SELECTED_MIRROR="packages.termux.dev"
-fi
-
-# 强制设置镜像源配置
-log_info "配置Termux镜像源为: $SELECTED_MIRROR"
-
-# 方法1：直接修改sources.list
-mkdir -p "$PREFIX/etc/apt"
-{
-    echo "# 主仓库"
-    echo "deb https://$SELECTED_MIRROR/termux/apt/termux-main stable main"
-    echo ""
-    echo "# 游戏仓库（可选）"
-    echo "# deb https://$SELECTED_MIRROR/termux/apt/termux-games games stable"
-    echo ""
-    echo "# 科学仓库（可选）"
-    echo "# deb https://$SELECTED_MIRROR/termux/apt/termux-science science stable"
-} > "$PREFIX/etc/apt/sources.list"
-
-# 方法2：设置chosen_mirrors（如果目录存在）
-if [ -d "$PREFIX/etc/termux/mirrors" ]; then
-    echo "$SELECTED_MIRROR" > "$PREFIX/etc/termux/chosen_mirrors"
-fi
-
-# 方法3：清除apt缓存并强制更新
-rm -rf "$PREFIX/var/lib/apt/lists/"*
-apt clean 2>/dev/null || true
-
-log_success "镜像源配置完成: $SELECTED_MIRROR"
-
-# 更新包列表（多次尝试确保成功）
-log_info "更新包列表..."
-for i in {1..3}; do
-    if pkg update; then
-        log_success "包列表更新成功"
-        break
-    else
-        log_warning "第 $i 次更新失败，重试..."
-        sleep 2
-    fi
-done
-
-# ==== 步骤4：更新包管理器 ====
-show_progress 4 10 "正在更新系统组件，为安装做准备~"
-log_info "更新包管理器..."
-
-OPENSSL_CNF="/data/data/com.termux/files/usr/etc/tls/openssl.cnf"
-[ -f "$OPENSSL_CNF" ] && rm -f "$OPENSSL_CNF"
-pkg update && pkg upgrade -y
-log_success "包管理器更新完成"
+# ==== 步骤3 & 4：Termux软件安装 (已跳过) ====
+show_progress 3 10 "跳过Termux软件和镜像源更新..."
+log_warning "根据用户指令，已跳过Termux软件安装过程。"
+log_info "脚本将假定您的Termux环境已准备就绪。"
+sleep 2
 
 # ==== 步骤5：安装Node.js ====
 show_progress 5 10 "正在安装Node.js运行环境~"
@@ -568,7 +433,7 @@ case $choice in
     *)
         echo -e "${RED}>> ⚠️ 无效选择${NC}"
         ;;
-esac
+Esac
 
 echo ""
 read -p "按Enter键返回菜单..."
@@ -591,7 +456,7 @@ for pf in "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile"; do
 done
 if [ -z "$PROFILE_FILE" ]; then
     PROFILE_FILE="$HOME/.bashrc"
-fi
+}
 touch "$PROFILE_FILE"
 
 if ! grep -qE 'bash[ ]+\$HOME/menu\.sh' "$PROFILE_FILE"; then
@@ -643,7 +508,7 @@ $(for i in "${!GITHUB_MIRRORS[@]}"; do
     echo "    {"
     echo "      \"priority\": $((i+1)),"
     echo "      \"url\": \"${GITHUB_MIRRORS[$i]}\","
-    echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\""
+    echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\"
     if [ $i -eq $((${#GITHUB_MIRRORS[@]}-1)) ]; then
         echo "    }"
     else
