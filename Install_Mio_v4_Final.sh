@@ -14,7 +14,7 @@ BRIGHT_MAGENTA='\033[1;95m'
 NC='\033[0m'
 
 # ==== 版本信息 ====
-SCRIPT_VERSION="2.1.0"
+SCRIPT_VERSION="2.1.1"
 INSTALL_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
 # ==== 输出函数 ====
@@ -382,30 +382,30 @@ echo -e "${YELLOW}当前版本: ${INSTALL_VERSION:-未知}${NC}"
 echo -e "${YELLOW}安装日期: ${INSTALL_DATE:-未知}${NC}"
 echo ""
 
-echo "1. 🚀 启动 SillyTavern"
-echo "2. 🔄 更新 SillyTavern"
-echo "3. 🌐 更新GitHub镜像源"
-echo "4. 📊 查看系统信息"
-echo "5. 🛠️ 重新安装依赖"
-echo "6. ❌ 退出"
+echo "1. 启动 SillyTavern"
+echo "2. 更新 SillyTavern"
+echo "3. 更新GitHub镜像源"
+echo "4. 查看系统信息"
+echo "5. 重新安装依赖"
+echo "6. 退出"
 echo ""
 
 read -p "请选择 [1-6]: " choice
 
 case $choice in
     1)
-        echo -e "${GREEN}>> 🚀 启动 SillyTavern...${NC}"
+        echo -e "${GREEN}>> 启动 SillyTavern...${NC}"
         cd "$HOME/SillyTavern" && node server.js
         ;;
     2)
-        echo -e "${CYAN}>> 🔄 更新 SillyTavern...${NC}"
+        echo -e "${CYAN}>> 更新 SillyTavern...${NC}"
         cd "$HOME/SillyTavern" || exit 1
         git pull origin release
         npm install --no-audit --no-fund --omit=dev
-        echo -e "${GREEN}>> ✅ 更新完成！${NC}"
+        echo -e "${GREEN}>> 更新完成！${NC}"
         ;;
     3)
-        echo -e "${CYAN}>> 🌐 更新GitHub镜像源...${NC}"
+        echo -e "${CYAN}>> 更新GitHub镜像源...${NC}"
         if [ -f "$HOME/一键更新镜像源.sh" ]; then
             bash "$HOME/一键更新镜像源.sh"
         else
@@ -413,25 +413,25 @@ case $choice in
         fi
         ;;
     4)
-        echo -e "${CYAN}>> 📊 系统信息:${NC}"
+        echo -e "${CYAN}>> 查看系统信息:${NC}"
         echo "Node.js版本: $(node --version 2>/dev/null || echo '未安装')"
         echo "npm版本: $(npm --version 2>/dev/null || echo '未安装')"
         echo "Git版本: $(git --version 2>/dev/null || echo '未安装')"
         echo "SillyTavern目录: $([ -d "$HOME/SillyTavern" ] && echo '存在' || echo '不存在')"
         ;;
     5)
-        echo -e "${CYAN}>> 🛠️ 重新安装依赖...${NC}"
+        echo -e "${CYAN}>> 重新安装依赖...${NC}"
         cd "$HOME/SillyTavern" || exit 1
         rm -rf node_modules package-lock.json
         npm install --no-audit --no-fund --omit=dev
-        echo -e "${GREEN}>> ✅ 依赖重新安装完成！${NC}"
+        echo -e "${GREEN}>> 依赖重新安装完成！${NC}"
         ;;
     6)
-        echo -e "${YELLOW}>> 👋 再见！感谢使用！${NC}"
+        echo -e "${YELLOW}>> 再见！感谢使用！${NC}"
         exit 0
         ;;
     *)
-        echo -e "${RED}>> ⚠️ 无效选择${NC}"
+        echo -e "${RED}>> 无效选择${NC}"
         ;;
 Esac
 
