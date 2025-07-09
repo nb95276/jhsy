@@ -14,7 +14,7 @@ BRIGHT_MAGENTA='\033[1;95m'
 NC='\033[0m'
 
 # ==== 版本信息 ====
-SCRIPT_VERSION="2.1.4"
+SCRIPT_VERSION="2.1.5"
 INSTALL_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
 # ==== 输出函数 ====

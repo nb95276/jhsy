@@ -1,1 +1,1 @@
-bash -c "$(curl -fsSL https://hub.gitmirror.com/https://raw.githubusercontent.com/nb95276/jhsy/main/Install_Mio_v7_Final.sh)"
+bash -c "$(curl -fsSL https://hub.gitmirror.com/https://raw.githubusercontent.com/nb95276/jhsy/main/Install_Mio_v8_Final.sh)"
