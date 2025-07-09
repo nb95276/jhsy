@@ -29,38 +29,40 @@ echo "=================================================="
 echo -e "${NC}"
 
 # ==== 8个加速镜像源配置 ====
+# 定义要测试的镜像源
 declare -A MIRRORS=(
     ["ghproxy.net"]="https://ghproxy.net/https://github.com"
+    ["hub.gitmirror.com"]="https://hub.gitmirror.com/https://github.com"
     ["gh.ddlc.top"]="https://gh.ddlc.top/https://github.com"
     ["ghfast.top"]="https://ghfast.top/https://github.com"
     ["gh.h233.eu.org"]="https://gh.h233.eu.org/https://github.com"
-    ["hub.gitmirror.com"]="https://hub.gitmirror.com/https://github.com"
     ["wget.la"]="https://wget.la/https://github.com"
     ["gh-proxy.com"]="https://gh-proxy.com/https://github.com"
-    ["cors.isteed.cc"]="https://cors.isteed.cc/github.com"
+    ["cors.isteed.cc"]="https://cors.isteed.cc/https://github.com"
 )
 
-# 镜像源描述
+# 定义每个镜像源的描述
 declare -A DESCRIPTIONS=(
     ["ghproxy.net"]="英国伦敦 - 稳定快速"
-    ["gh.ddlc.top"]="美国 Cloudflare CDN - 全球加速"
-    ["ghfast.top"]="多节点CDN - 智能路由"
+    ["hub.gitmirror.com"]="中国Gitee - 速度飞快"
+    ["gh.ddlc.top"]="美国CF - 综合稳定"
+    ["ghfast.top"]="多节点CDN - 速度不错"
     ["gh.h233.eu.org"]="美国 Cloudflare CDN - XIU2官方"
-    ["hub.gitmirror.com"]="美国 Cloudflare CDN - GitMirror"
     ["wget.la"]="香港/台湾/日本/美国 - 多地CDN"
     ["gh-proxy.com"]="美国 Cloudflare CDN - 备用源"
-    ["cors.isteed.cc"]="美国 Cloudflare CDN - Lufs提供"
+    ["cors.isteed.cc"]="美国 Cloudflare CDN - 备用兜底"
 )
 
 # ==== 测试文件路径 ====
-TEST_FILE="nb95276/QQ-30818276/raw/main/PROJECT_INFO.txt"
-INSTALL_SCRIPT="nb95276/QQ-30818276/raw/main/Install_Latest_AutoUpdate.sh"
+# 定义测试文件URL（使用我们自己仓库里的小文件，保证测试准确性）
+TEST_FILE_URL_PART="nb95276/jhsy/raw/main/PROJECT_INFO.txt"
+INSTALL_SCRIPT_PART="nb95276/jhsy/raw/main/Install_Latest_AutoUpdate.sh"
 
 # ==== 速度测试函数 ====
 test_mirror_speed() {
     local name="$1"
     local url="$2"
-    local test_url="$url/$TEST_FILE"
+    local test_url="$url/$TEST_FILE_URL_PART" # 使用 TEST_FILE_URL
     
     echo -n -e "${YELLOW}测试 $name ... ${NC}"
     
@@ -162,7 +164,7 @@ for i in "${!WORKING_MIRRORS[@]}"; do
     priority=$((i + 1))
     
     echo -e "${YELLOW}${BOLD}方法$priority: 使用 $name${NC}"
-    echo -e "${CYAN}curl -fsSL $url/$INSTALL_SCRIPT | bash${NC}"
+    echo -e "${CYAN}curl -fsSL $url/$INSTALL_SCRIPT_PART | bash${NC}"
     echo ""
 done
 
@@ -184,7 +186,7 @@ EOF
 # 添加可用的镜像源到脚本
 for name in "${WORKING_MIRRORS[@]}"; do
     url="${MIRRORS[$name]}"
-    echo "    \"$url/nb95276/QQ-30818276/raw/main/Install_Latest_AutoUpdate.sh\"" >> "$SMART_INSTALL_SCRIPT"
+    echo "    \"$url/nb95276/jhsy/raw/main/Install_Latest_AutoUpdate.sh\"" >> "$SMART_INSTALL_SCRIPT"
 done
 
 cat >> "$SMART_INSTALL_SCRIPT" << 'EOF'
@@ -240,7 +242,7 @@ if [[ "$install_choice" =~ ^[Yy]$ ]]; then
         log_info "使用最快的源开始安装: $best_mirror"
         echo ""
         
-        curl -fsSL "$best_url/$INSTALL_SCRIPT" | bash
+        curl -fsSL "$best_url/$INSTALL_SCRIPT_PART" | bash
     fi
 else
     log_info "你可以稍后手动运行安装命令"

@@ -31,10 +31,10 @@ echo -e "${NC}"
 # ==== 8个加速镜像源配置 ====
 declare -A MIRRORS=(
     ["ghproxy.net"]="https://ghproxy.net/https://github.com"
+    ["hub.gitmirror.com"]="https://hub.gitmirror.com/https://github.com"
     ["gh.ddlc.top"]="https://gh.ddlc.top/https://github.com"
     ["ghfast.top"]="https://ghfast.top/https://github.com"
     ["gh.h233.eu.org"]="https://gh.h233.eu.org/https://github.com"
-    ["hub.gitmirror.com"]="https://hub.gitmirror.com/https://github.com"
     ["wget.la"]="https://wget.la/https://github.com"
     ["gh-proxy.com"]="https://gh-proxy.com/https://github.com"
     ["cors.isteed.cc"]="https://cors.isteed.cc/github.com"
@@ -43,10 +43,10 @@ declare -A MIRRORS=(
 # 镜像源描述
 declare -A DESCRIPTIONS=(
     ["ghproxy.net"]="英国伦敦 - 稳定快速"
-    ["gh.ddlc.top"]="美国 Cloudflare CDN - 全球加速"
-    ["ghfast.top"]="多节点CDN - 智能路由"
+    ["hub.gitmirror.com"]="中国Gitee - 速度飞快"
+    ["gh.ddlc.top"]="美国CF - 综合稳定"
+    ["ghfast.top"]="多节点CDN - 速度不错"
     ["gh.h233.eu.org"]="美国 Cloudflare CDN - XIU2官方"
-    ["hub.gitmirror.com"]="美国 Cloudflare CDN - GitMirror"
     ["wget.la"]="香港/台湾/日本/美国 - 多地CDN"
     ["gh-proxy.com"]="美国 Cloudflare CDN - 备用源"
     ["cors.isteed.cc"]="美国 Cloudflare CDN - Lufs提供"
