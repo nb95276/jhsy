@@ -456,7 +456,7 @@ for pf in "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile"; do
 done
 if [ -z "$PROFILE_FILE" ]; then
     PROFILE_FILE="$HOME/.bashrc"
-}
+fi
 touch "$PROFILE_FILE"
 
 if ! grep -qE 'bash[ ]+\$HOME/menu\.sh' "$PROFILE_FILE"; then
