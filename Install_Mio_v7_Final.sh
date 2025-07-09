@@ -14,7 +14,7 @@ BRIGHT_MAGENTA='\033[1;95m'
 NC='\033[0m'
 
 # ==== 版本信息 ====
-SCRIPT_VERSION="2.1.2"
+SCRIPT_VERSION="2.1.4"
 INSTALL_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
 # ==== 输出函数 ====
@@ -81,6 +81,8 @@ done
 if [ ${#missing_tools[@]} -gt 0 ]; then
     log_warning "需要安装必要工具: ${missing_tools[*]}"
     log_info "正在自动安装..."
+    log_info "Mio正在帮您切换到清华大学镜像源，加速基础工具下载哦~"
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/termux/apt/termux-main stable main" > $PREFIX/etc/apt/sources.list
     pkg update && pkg install -y "${missing_tools[@]}"
     
     # 再次检查
