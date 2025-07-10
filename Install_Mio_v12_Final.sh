@@ -161,14 +161,14 @@ else
     
     # 提取clone_url数组中的镜像源
     if echo "$XIU2_CONTENT" | grep -q "clone_url.*="; then
-        while IFS= read -r line; do
-            if [[ "$line" =~ \['([^']+)' ]]; then
-                url="${BASH_REMATCH[1]}"
-                if [[ "$url" == *"github.com"* ]]; then
-                    GITHUB_MIRRORS+=("$url")
-                fi
+        # Use grep -o to extract all URLs within single quotes from the relevant block
+        url_list=$(echo "$XIU2_CONTENT" | sed -n '/clone_url.*=/,/\]/p' | grep -o "'https[^\']\+'" | tr -d "'")
+        for url in $url_list; do
+            # Only add URLs that are actual github mirrors
+            if [[ "$url" == *"github.com"* ]]; then
+                GITHUB_MIRRORS+=("$url")
             fi
-        done < <(echo "$XIU2_CONTENT" | sed -n '/clone_url.*=/,/\]/p')
+        done
     fi
     
     # 确保有备用源
@@ -329,7 +329,7 @@ else
                         clone_success=true
                         break
                     fi
-                fi
+                }
                 rm -f "/tmp/sillytavern.zip"
             fi
         done
@@ -617,7 +617,7 @@ network_config_menu() {
                     sed -i 's/^listen: true$/listen: false/' config.yaml 2>/dev/null
                     sed -i 's/^enableUserAccounts: true$/enableUserAccounts: false/' config.yaml 2>/dev/null
                     sed -i 's/^enableDiscreetLogin: true$/enableDiscreetLogin: false/' config.yaml 2>/dev/null
-                    sed -i 's/^  - 0\.0\.0\.0\/0$/  - 127.0.0.1/' config.yaml 2>/dev/null
+                    sed -i 's/^  - 0\\.0\\.0\\.0\\/0$/  - 127.0.0.1/' config.yaml 2>/dev/null
                     echo -e "${GREEN}${BOLD}>> ✅ 网络监听已关闭（安全模式）${NC}"
                     echo -e "${CYAN}${BOLD}>> 💡 现在只能通过 http://127.0.0.1:8000 访问${NC}"
 
@@ -626,7 +626,7 @@ network_config_menu() {
                     sed -i 's/^listen: false$/listen: true/' config.yaml 2>/dev/null
                     sed -i 's/^enableUserAccounts: false$/enableUserAccounts: true/' config.yaml 2>/dev/null
                     sed -i 's/^enableDiscreetLogin: false$/enableDiscreetLogin: true/' config.yaml 2>/dev/null
-                    sed -i 's/^  - 127\.0\.0\.1$/  - 0.0.0.0\/0/' config.yaml 2>/dev/null
+                    sed -i 's/^  - 127\\.0\\.0\\.1$/  - 0.0.0.0\\/0/' config.yaml 2>/dev/null
                     echo -e "${GREEN}${BOLD}>> ✅ 网络监听已开启（共享模式）${NC}"
                     echo -e "${CYAN}${BOLD}>> 💡 现在可以通过手机IP地址在其他设备访问${NC}"
                     echo -e "${YELLOW}${BOLD}>> ⚠️ 注意：请确保在安全的网络环境下使用${NC}"
@@ -1075,7 +1075,7 @@ if [ -z "$PROFILE_FILE" ]; then
 fi
 touch "$PROFILE_FILE"
 
-if ! grep -qE 'bash[ ]+\$HOME/menu\.sh' "$PROFILE_FILE"; then
+if ! grep -qE 'bash[ ]+\$HOME/menu\\.sh' "$PROFILE_FILE"; then
     echo 'bash $HOME/menu.sh' >> "$PROFILE_FILE"
     log_success "自动启动配置完成"
 else
@@ -1124,66 +1124,4 @@ $(for i in "${!GITHUB_MIRRORS[@]}"; do
     echo "    {"
     echo "      \"priority\": $((i+1)),"
     echo "      \"url\": \"${GITHUB_MIRRORS[$i]}\","
-    echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\""
-    if [ $i -eq $((${#GITHUB_MIRRORS[@]}-1)) ]; then
-        echo "    }"
-    else
-        echo "    },"
-    fi
-done)
-  ],
-  "note": "本配置在安装时自动生成，包含当前最优的镜像源排序"
-}
-EOF
-
-log_success "镜像源配置已保存"
-
-# ==== 安装完成 ====
-echo ""
-echo -e "${GREEN}${BOLD}"
-echo "🎉🎉🎉 恭喜小白！SillyTavern安装成功！🎉🎉🎉"
-echo "✨ 你现在可以和AI聊天了！"
-echo "💕 安装过程完全自动化，是不是很简单？"
-echo "🌸 接下来只需要按任意键进入菜单"
-echo "=================================================="
-echo -e "${NC}"
-
-echo -e "${YELLOW}${BOLD}🎯 小白用户下一步操作指南：${NC}"
-echo -e "${GREEN}${BOLD}1. 按任意键进入菜单${NC}"
-echo -e "${GREEN}${BOLD}2. 选择"1. 🚀 启动 SillyTavern"${NC}"
-echo -e "${GREEN}${BOLD}3. 在手机浏览器中打开 http://localhost:8000${NC}"
-echo -e "${GREEN}${BOLD}4. 开始和AI聊天！${NC}"
-echo ""
-echo -e "${CYAN}${BOLD}💡 重要提示：${NC}"
-echo -e "${YELLOW}  📱 以后打开Termux会自动进入菜单${NC}"
-echo -e "${YELLOW}  🔄 如需重启SillyTavern，选择菜单中的启动选项${NC}"
-echo -e "${YELLOW}  🌐 聊天地址永远是：http://localhost:8000${NC}"
-
-log_info "安装摘要:"
-echo -e "${CYAN}  - 脚本版本: $SCRIPT_VERSION${NC}"
-echo -e "${CYAN}  - 安装时间: $INSTALL_DATE${NC}"
-echo -e "${CYAN}  - 镜像源数量: ${#GITHUB_MIRRORS[@]} 个${NC}"
-echo -e "${CYAN}  - 自动启动: 已配置${NC}"
-echo -e "${CYAN}  - 增强菜单: 已安装${NC}"
-
-echo ""
-log_info "推荐的镜像源（前5个）:"
-for i in "${!GITHUB_MIRRORS[@]}"; do
-    if [ $i -lt 5 ]; then
-        domain=$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)
-        echo -e "${GREEN}  ✅ $domain${NC}"
-    fi
-done
-
-echo ""
-log_info "使用提示:"
-echo -e "${CYAN}  1. 重启Termux后会自动进入菜单${NC}"
-echo -e "${CYAN}  2. 菜单中可以更新镜像源保持最佳速度${NC}"
-echo -e "${CYAN}  3. 遇到问题可以重新安装依赖${NC}"
-
-echo ""
-log_success "现在享受与AI聊天的乐趣吧！😸💕"
-
-echo ""
-read -p "按任意键进入主菜单开始使用..." -n1 -s
-exec bash "$HOME/menu.sh"
+    echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\"
