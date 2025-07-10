@@ -1122,10 +1122,10 @@ cat > "$MIRROR_CONFIG" << EOF
   "mirrors": [
 $(for i in "${!GITHUB_MIRRORS[@]}"; do
     echo "    {"
-    echo "      \"priority\": $((i+1)),"
-    echo "      \"url\": \"${GITHUB_MIRRORS[$i]}\","
-    echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\"
-    if [ $i -eq $((${#GITHUB_MIRRORS[@]}-1)) ]; then
+    echo "      "priority": $((i+1)),"
+    echo "      "url": "${GITHUB_MIRRORS[$i]}","
+    echo "      "domain": "$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)""
+    if [ $i -eq $(( ${#GITHUB_MIRRORS[@]} - 1 )) ]; then
         echo "    }"
     else
         echo "    },"
