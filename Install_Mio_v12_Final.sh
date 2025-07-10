@@ -83,7 +83,7 @@ if [ ${#missing_tools[@]} -gt 0 ]; then
     log_info "正在自动安装..."
     log_info "Mio正在帮您切换到清华大学镜像源，加速基础工具下载哦~"
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/termux/apt/termux-main stable main" > $PREFIX/etc/apt/sources.list
-    pkg update && pkg install -y "${missing_tools[@]}"
+    pkg update -y && pkg install -y "${missing_tools[@]}"
     
     # 再次检查
     for tool in "${missing_tools[@]}"; do
@@ -162,7 +162,7 @@ else
     # 提取clone_url数组中的镜像源
     if echo "$XIU2_CONTENT" | grep -q "clone_url.*="; then
         while IFS= read -r line; do
-            if [[ "$line" =~ \[\'([^\']+)\' ]]; then
+            if [[ "$line" =~ \['([^']+)' ]]; then
                 url="${BASH_REMATCH[1]}"
                 if [[ "$url" == *"github.com"* ]]; then
                     GITHUB_MIRRORS+=("$url")
@@ -617,7 +617,7 @@ network_config_menu() {
                     sed -i 's/^listen: true$/listen: false/' config.yaml 2>/dev/null
                     sed -i 's/^enableUserAccounts: true$/enableUserAccounts: false/' config.yaml 2>/dev/null
                     sed -i 's/^enableDiscreetLogin: true$/enableDiscreetLogin: false/' config.yaml 2>/dev/null
-                    sed -i 's/^  - 0\\.0\\.0\\.0\\/0$/  - 127.0.0.1/' config.yaml 2>/dev/null
+                    sed -i 's/^  - 0\.0\.0\.0\/0$/  - 127.0.0.1/' config.yaml 2>/dev/null
                     echo -e "${GREEN}${BOLD}>> ✅ 网络监听已关闭（安全模式）${NC}"
                     echo -e "${CYAN}${BOLD}>> 💡 现在只能通过 http://127.0.0.1:8000 访问${NC}"
 
@@ -626,7 +626,7 @@ network_config_menu() {
                     sed -i 's/^listen: false$/listen: true/' config.yaml 2>/dev/null
                     sed -i 's/^enableUserAccounts: false$/enableUserAccounts: true/' config.yaml 2>/dev/null
                     sed -i 's/^enableDiscreetLogin: false$/enableDiscreetLogin: true/' config.yaml 2>/dev/null
-                    sed -i 's/^  - 127\\.0\\.0\\.1$/  - 0.0.0.0\\/0/' config.yaml 2>/dev/null
+                    sed -i 's/^  - 127\.0\.0\.1$/  - 0.0.0.0\/0/' config.yaml 2>/dev/null
                     echo -e "${GREEN}${BOLD}>> ✅ 网络监听已开启（共享模式）${NC}"
                     echo -e "${CYAN}${BOLD}>> 💡 现在可以通过手机IP地址在其他设备访问${NC}"
                     echo -e "${YELLOW}${BOLD}>> ⚠️ 注意：请确保在安全的网络环境下使用${NC}"
@@ -642,7 +642,7 @@ network_config_menu() {
                 fi
                 press_any_key
                 ;;
-            *)\
+            *)
                 echo -e "${RED}${BOLD}>> 😅 输入错误，请重新选择哦~${NC}"
                 sleep 1
                 ;;
@@ -670,7 +670,7 @@ plugin_menu() {
             0) break ;;
             1) plugin_install_menu ;;
             2) plugin_uninstall_menu ;;
-            *)\
+            *)
                 echo -e "${RED}${BOLD}>> 😅 输入错误，请重新选择哦~${NC}"
                 sleep 1
                 ;;
@@ -725,7 +725,7 @@ plugin_install_menu() {
                 echo -e "${BLUE}${BOLD}• 支持导出、分享和自定义结构${NC}"
                 echo ""
                 echo -e "${YELLOW}${BOLD}📝 使用说明：${NC}"
-                echo -e "${CYAN}${BOLD}• 仅在\"聊天补全模式\"下工作${NC}"
+                echo -e "${CYAN}${BOLD}• 仅在"聊天补全模式"下工作${NC}"
                 echo ""
                 echo -ne "${YELLOW}${BOLD}💕 是否安装记忆表格？(y/n)：${NC}"
                 read -n1 ans; echo
@@ -733,7 +733,7 @@ plugin_install_menu() {
                     install_plugin "st-memory-enhancement" "muyoou/st-memory-enhancement" "记忆表格"
                 fi
                 ;;
-            *)\
+            *)
                 echo -e "${RED}${BOLD}>> 😅 输入错误，请重新选择哦~${NC}"
                 sleep 1
                 ;;
@@ -765,7 +765,7 @@ install_plugin() {
                   "https://github.tbedu.top/https://github.com" \
                   "https://gh.llkk.cc/https://github.com" \
                   "https://gh.ddlc.top/https://github.com" \
-                  "https://raw.githubusercontent.com"; do
+                  "https://github.com"; do
 
         local domain=$(echo "$mirror" | sed 's|https://||' | cut -d'/' -f1)
         echo -e "${YELLOW}${BOLD}>> 尝试源: $domain${NC}"
@@ -802,7 +802,7 @@ plugin_uninstall_menu() {
             echo -e "${YELLOW}${BOLD}>> 📂 插件目录不存在，无插件可卸载${NC}"
             press_any_key
             break
-        }
+        fi
 
         # 获取已安装的插件列表
         mapfile -t plugin_dirs < <(find "$PLUGIN_ROOT" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
@@ -866,7 +866,7 @@ script_update_menu() {
             0) break ;;
             1) check_script_update ;;
             2) show_update_log ;;
-            *)\
+            *)
                 echo -e "${RED}${BOLD}>> 😅 输入错误，请重新选择哦~${NC}"
                 sleep 1
                 ;;
@@ -898,7 +898,7 @@ check_script_update() {
         local domain=$(echo "$mirror" | sed 's|https://||' | cut -d'/' -f1)
         echo -e "${YELLOW}${BOLD}>> 尝试源: $domain${NC}"
 
-        if remote_version=$(timeout 15 curl -k -fsSL "$mirror/nb95276/jiuguan/main/menu.sh" | grep "MENU_VERSION=" | head -n1 | cut -d'=' -f2 2>/dev/null); then
+        if remote_version=$(timeout 15 curl -k -fsSL "$mirror/nb95276/SillyTavern-Termux/main/menu.sh" | grep "MENU_VERSION=" | head -n1 | cut -d'=' -f2 2>/dev/null); then
             if [ -n "$remote_version" ]; then
                 echo -e "${GREEN}${BOLD}>> 远程版本：$remote_version${NC}"
                 success=true
@@ -912,7 +912,7 @@ check_script_update() {
         echo -e "${RED}${BOLD}>> 💔 无法获取远程版本信息，请检查网络连接${NC}"
         press_any_key
         return
-    }
+    fi
 
     # 比较版本
     if [ "$current_version" = "$remote_version" ]; then
@@ -953,7 +953,7 @@ update_script() {
         local domain=$(echo "$mirror" | sed 's|https://||' | cut -d'/' -f1)
         echo -e "${YELLOW}${BOLD}>> 尝试源: $domain${NC}"
 
-        if timeout 30 curl -k -fsSL -o "$HOME/menu.sh.new" "$mirror/nb95276/jiuguan/main/menu.sh" 2>/dev/null; then
+        if timeout 30 curl -k -fsSL -o "$HOME/menu.sh.new" "$mirror/nb95276/SillyTavern-Termux/main/menu.sh" 2>/dev/null; then
             if [ -f "$HOME/menu.sh.new" ] && [ $(stat -c%s "$HOME/menu.sh.new" 2>/dev/null || echo 0) -gt 1000 ]; then
                 echo -e "${GREEN}${BOLD}>> ✅ 下载成功！来源: $domain${NC}"
                 success=true
@@ -968,17 +968,14 @@ update_script() {
     if [ "$success" = false ]; then
         echo -e "${RED}${BOLD}>> 💔 脚本更新失败，请稍后重试${NC}"
         return
-    }
+    fi
 
     # 备份当前脚本
     cp "$HOME/menu.sh" "$HOME/menu.sh.bak" 2>/dev/null
 
     # 替换脚本
     mv "$HOME/menu.sh.new" "$HOME/menu.sh"
-    # Windows环境下不需要chmod
-    if command -v chmod >/dev/null 2>/dev/null; then
-        chmod +x "$HOME/menu.sh"
-    fi
+    chmod +x "$HOME/menu.sh"
 
     echo -e "${GREEN}${BOLD}>> ✅ 脚本更新成功！${NC}"
     echo -e "${CYAN}${BOLD}>> 🔄 正在重启菜单...${NC}"
@@ -1019,11 +1016,11 @@ show_update_log() {
 # =========================================================================
 while true; do
     clear
-    echo -e "${MAGENTA}${BOLD}"
-    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
+    echo -e "${CYAN}${BOLD}"
+    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
     echo "🌸        SillyTavern 小红书专版        🌸"
     echo "🌸      💕 专为姐妹们优化设计 💕       🌸"
-    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
+    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
     echo -e "${NC}"
     echo -e "${RED}${BOLD}0. 👋 退出程序${NC}"
     echo -e "${GREEN}${BOLD}1. 🚀 启动 SillyTavern${NC}"
@@ -1051,7 +1048,7 @@ while true; do
         5) network_config_menu ;;
         6) plugin_menu ;;
         7) script_update_menu ;;
-        *)\
+        *)
             echo -e "${RED}${BOLD}>> 😅 输入错误，请重新选择哦~${NC}"
             sleep 1
             ;;
@@ -1127,7 +1124,7 @@ $(for i in "${!GITHUB_MIRRORS[@]}"; do
     echo "    {"
     echo "      \"priority\": $((i+1)),"
     echo "      \"url\": \"${GITHUB_MIRRORS[$i]}\","
-    echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\"
+    echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\""
     if [ $i -eq $((${#GITHUB_MIRRORS[@]}-1)) ]; then
         echo "    }"
     else
