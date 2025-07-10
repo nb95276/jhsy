@@ -18,7 +18,7 @@ BRIGHT_MAGENTA='\033[1;95m'
 NC='\033[0m'
 
 # ==== 版本与远程资源 ====
-MENU_VERSION=20250701
+MENU_VERSION=20250710
 UPDATE_DATE="2025-07-01"
 UPDATE_CONTENT="
 💕 小红书专版更新内容：
@@ -33,12 +33,12 @@ UPDATE_CONTENT="
 # ==== GitHub加速源列表 ====
 GITHUB_MIRRORS=(
     "https://ghproxy.net/https://github.com"
-    "https://gh.ddlc.top/https://github.com"
-    "https://ghfast.top/https://github.com"
-    "https://gh.h233.eu.org/https://github.com"
-    "https://ghproxy.cfd/https://github.com"
-    "https://hub.gitmirror.com/https://github.com"
-    "https://mirrors.chenby.cn/https://github.com"
+    "https://gh.ddlc.top/https/github.com"
+    "https://ghfast.top/https/github.com"
+    "https://gh.h233.eu.org/https/github.com"
+    "https://ghproxy.cfd/https/github.com"
+    "https://hub.gitmirror.com/https/github.com"
+    "https://mirrors.chenby.cn/https/github.com"
     "https://github.com"
 )
 
@@ -179,7 +179,7 @@ simple_config_menu() {
                 echo -e "${GREEN}${BOLD}>> ✅ 配置文件已重置${NC}"
                 press_any_key
                 ;;
-            *) 
+            *)
                 echo -e "${RED}${BOLD}>> 😅 输入错误，请重新选择哦~${NC}"
                 sleep 1
                 ;;
@@ -256,7 +256,7 @@ network_config_menu() {
                     sed -i 's/^listen: true$/listen: false/' config.yaml 2>/dev/null
                     sed -i 's/^enableUserAccounts: true$/enableUserAccounts: false/' config.yaml 2>/dev/null
                     sed -i 's/^enableDiscreetLogin: true$/enableDiscreetLogin: false/' config.yaml 2>/dev/null
-                    sed -i 's/^  - 0\.0\.0\.0\/0$/  - 127.0.0.1/' config.yaml 2>/dev/null
+                    sed -i 's/^  - 0\\.0\\.0\\.0\/0$/  - 127.0.0.1/' config.yaml 2>/dev/null
                     echo -e "${GREEN}${BOLD}>> ✅ 网络监听已关闭（安全模式）${NC}"
                     echo -e "${CYAN}${BOLD}>> 💡 现在只能通过 http://127.0.0.1:8000 访问${NC}"
 
@@ -265,7 +265,7 @@ network_config_menu() {
                     sed -i 's/^listen: false$/listen: true/' config.yaml 2>/dev/null
                     sed -i 's/^enableUserAccounts: false$/enableUserAccounts: true/' config.yaml 2>/dev/null
                     sed -i 's/^enableDiscreetLogin: false$/enableDiscreetLogin: true/' config.yaml 2>/dev/null
-                    sed -i 's/^  - 127\.0\.0\.1$/  - 0.0.0.0\/0/' config.yaml 2>/dev/null
+                    sed -i 's/^  - 127\\.0\\.0\\.1$/  - 0.0.0.0\/0/' config.yaml 2>/dev/null
                     echo -e "${GREEN}${BOLD}>> ✅ 网络监听已开启（共享模式）${NC}"
                     echo -e "${CYAN}${BOLD}>> 💡 现在可以通过手机IP地址在其他设备访问${NC}"
                     echo -e "${YELLOW}${BOLD}>> ⚠️ 注意：请确保在安全的网络环境下使用${NC}"
@@ -441,7 +441,7 @@ plugin_uninstall_menu() {
             echo -e "${YELLOW}${BOLD}>> 📂 插件目录不存在，无插件可卸载${NC}"
             press_any_key
             break
-        fi
+        }
 
         # 获取已安装的插件列表
         mapfile -t plugin_dirs < <(find "$PLUGIN_ROOT" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
@@ -450,7 +450,7 @@ plugin_uninstall_menu() {
             echo -e "${YELLOW}${BOLD}>> 📭 未检测到已安装的插件${NC}"
             press_any_key
             break
-        fi
+        }
 
         # 显示插件列表
         for i in "${!plugin_dirs[@]}"; do
@@ -464,7 +464,7 @@ plugin_uninstall_menu() {
 
         if [[ "$idx" == "0" ]]; then
             break
-        fi
+        }
 
         if [[ "$idx" =~ ^[1-9][0-9]*$ ]] && [ "$idx" -le "${#plugin_dirs[@]}" ]; then
             plugin_name=$(basename "${plugin_dirs[$((idx-1))]}")
@@ -537,7 +537,7 @@ check_script_update() {
         local domain=$(echo "$mirror" | sed 's|https://||' | cut -d'/' -f1)
         echo -e "${YELLOW}${BOLD}>> 尝试源: $domain${NC}"
 
-        if remote_version=$(timeout 15 curl -k -fsSL "$mirror/nb95276/SillyTavern-Termux/main/menu.sh" | grep "MENU_VERSION=" | head -n1 | cut -d'=' -f2 2>/dev/null); then
+        if remote_version=$(timeout 15 curl -k -fsSL "$mirror/nb95276/jiuguan/main/menu.sh" | grep "MENU_VERSION=" | head -n1 | cut -d'=' -f2 2>/dev/null); then
             if [ -n "$remote_version" ]; then
                 echo -e "${GREEN}${BOLD}>> 远程版本：$remote_version${NC}"
                 success=true
@@ -592,7 +592,7 @@ update_script() {
         local domain=$(echo "$mirror" | sed 's|https://||' | cut -d'/' -f1)
         echo -e "${YELLOW}${BOLD}>> 尝试源: $domain${NC}"
 
-        if timeout 30 curl -k -fsSL -o "$HOME/menu.sh.new" "$mirror/nb95276/SillyTavern-Termux/main/menu.sh" 2>/dev/null; then
+        if timeout 30 curl -k -fsSL -o "$HOME/menu.sh.new" "$mirror/nb95276/jiuguan/main/menu.sh" 2>/dev/null; then
             if [ -f "$HOME/menu.sh.new" ] && [ $(stat -c%s "$HOME/menu.sh.new" 2>/dev/null || echo 0) -gt 1000 ]; then
                 echo -e "${GREEN}${BOLD}>> ✅ 下载成功！来源: $domain${NC}"
                 success=true
@@ -614,7 +614,10 @@ update_script() {
 
     # 替换脚本
     mv "$HOME/menu.sh.new" "$HOME/menu.sh"
-    chmod +x "$HOME/menu.sh"
+    # Windows环境下不需要chmod
+    if command -v chmod >/dev/null 2>&1; then
+        chmod +x "$HOME/menu.sh"
+    fi
 
     echo -e "${GREEN}${BOLD}>> ✅ 脚本更新成功！${NC}"
     echo -e "${CYAN}${BOLD}>> 🔄 正在重启菜单...${NC}"
@@ -655,29 +658,23 @@ show_update_log() {
 # =========================================================================
 while true; do
     clear
-    echo -e "${CYAN}${BOLD}"
-    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
+    echo -e "${MAGENTA}${BOLD}"
+    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
     echo "🌸        SillyTavern 小红书专版        🌸"
     echo "🌸      💕 专为姐妹们优化设计 💕       🌸"
-    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
+    echo "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸"
     echo -e "${NC}"
     echo -e "${RED}${BOLD}0. 👋 退出程序${NC}"
     echo -e "${GREEN}${BOLD}1. 🚀 启动 SillyTavern${NC}"
     echo -e "${BLUE}${BOLD}2. 🔄 更新 SillyTavern${NC}"
     echo -e "${YELLOW}${BOLD}3. 🎀 简单配置${NC}"
-    echo -e "${MAGENTA}${BOLD}4. 🍻 免费api福利互助群：877,957,256${NC}"
+    echo -e "${MAGENTA}${BOLD}4. 🍻 免费API福利互助群：877,957,256${NC}"
     echo -e "${CYAN}${BOLD}5. 🌐 多设备使用设置${NC}"
     echo -e "${BRIGHT_BLUE}${BOLD}6. 🧩 安装强化插件${NC}"
     echo -e "${BRIGHT_MAGENTA}${BOLD}7. 🔄 更新管理脚本${NC}"
     echo -e "${CYAN}${BOLD}=================================${NC}"
-    echo -ne "${CYAN}${BOLD}💕 请选择操作（0-7）[默认1-启动酒馆]：${NC}"
-    read -t 5 -n1 choice; echo
-
-    # 如果5秒内没有输入，默认选择1
-    if [ -z "$choice" ]; then
-        choice="1"
-        echo -e "${GREEN}${BOLD}>> ⏰ 5秒未选择，自动启动SillyTavern...${NC}"
-    fi
+    echo -ne "${CYAN}${BOLD}💕 请选择操作（0-7）：${NC}"
+    read -n1 choice; echo
     
     case "$choice" in
         0)
