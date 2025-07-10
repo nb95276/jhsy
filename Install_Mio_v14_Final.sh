@@ -206,8 +206,8 @@ fi
 
 # ==== 步骤3 & 4：Termux软件安装 (已跳过) ====
 show_progress 3 10 "跳过Termux软件和镜像源更新..."
-log_warning "根据用户指令，已跳过Termux软件安装过程。"
-log_info "脚本将假定您的Termux环境已准备就绪。"
+log_warning "根据用户指令，已跳过Termux软件安装过程."
+log_info "脚本将假定您的Termux环境已准备就绪."
 sleep 2
 
 # ==== 步骤5：安装Node.js ====
@@ -329,7 +329,7 @@ else
                         clone_success=true
                         break
                     fi
-                }
+                fi
                 rm -f "/tmp/sillytavern.zip"
             fi
         done
@@ -1125,3 +1125,65 @@ $(for i in "${!GITHUB_MIRRORS[@]}"; do
     echo "      \"priority\": $((i+1)),"
     echo "      \"url\": \"${GITHUB_MIRRORS[$i]}\","
     echo "      \"domain\": \"$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)\"
+    if [ $i -eq $((${#GITHUB_MIRRORS[@]}-1)) ]; then
+        echo "    }"
+    else
+        echo "    },"
+    fi
+done)
+  ],
+  "note": "本配置在安装时自动生成，包含当前最优的镜像源排序"
+}
+EOF
+
+log_success "镜像源配置已保存"
+
+# ==== 安装完成 ====
+echo ""
+echo -e "${GREEN}${BOLD}"
+echo "🎉🎉🎉 恭喜小白！SillyTavern安装成功！🎉🎉🎉"
+echo "✨ 你现在可以和AI聊天了！"
+echo "💕 安装过程完全自动化，是不是很简单？"
+echo "🌸 接下来只需要按任意键进入菜单"
+echo "=================================================="
+echo -e "${NC}"
+
+echo -e "${YELLOW}${BOLD}🎯 小白用户下一步操作指南：${NC}"
+echo -e "${GREEN}${BOLD}1. 按任意键进入菜单${NC}"
+echo -e "${GREEN}${BOLD}2. 选择"1. 🚀 启动 SillyTavern"${NC}"
+echo -e "${GREEN}${BOLD}3. 在手机浏览器中打开 http://localhost:8000${NC}"
+echo -e "${GREEN}${BOLD}4. 开始和AI聊天！${NC}"
+echo ""
+echo -e "${CYAN}${BOLD}💡 重要提示：${NC}"
+echo -e "${YELLOW}  📱 以后打开Termux会自动进入菜单${NC}"
+echo -e "${YELLOW}  🔄 如需重启SillyTavern，选择菜单中的启动选项${NC}"
+echo -e "${YELLOW}  🌐 聊天地址永远是：http://localhost:8000${NC}"
+
+log_info "安装摘要:"
+echo -e "${CYAN}  - 脚本版本: $SCRIPT_VERSION${NC}"
+echo -e "${CYAN}  - 安装时间: $INSTALL_DATE${NC}"
+echo -e "${CYAN}  - 镜像源数量: ${#GITHUB_MIRRORS[@]} 个${NC}"
+echo -e "${CYAN}  - 自动启动: 已配置${NC}"
+echo -e "${CYAN}  - 增强菜单: 已安装${NC}"
+
+echo ""
+log_info "推荐的镜像源（前5个）:"
+for i in "${!GITHUB_MIRRORS[@]}"; do
+    if [ $i -lt 5 ]; then
+        domain=$(echo "${GITHUB_MIRRORS[$i]}" | sed 's|https://||' | cut -d'/' -f1)
+        echo -e "${GREEN}  ✅ $domain${NC}"
+    fi
+done
+
+echo ""
+log_info "使用提示:"
+echo -e "${CYAN}  1. 重启Termux后会自动进入菜单${NC}"
+echo -e "${CYAN}  2. 菜单中可以更新镜像源保持最佳速度${NC}"
+echo -e "${CYAN}  3. 遇到问题可以重新安装依赖${NC}"
+
+echo ""
+log_success "现在享受与AI聊天的乐趣吧！😸💕"
+
+echo ""
+read -p "按任意键进入主菜单开始使用..." -n1 -s
+exec bash "$HOME/menu.sh"
