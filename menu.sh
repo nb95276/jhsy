@@ -441,7 +441,7 @@ plugin_uninstall_menu() {
             echo -e "${YELLOW}${BOLD}>> 📂 插件目录不存在，无插件可卸载${NC}"
             press_any_key
             break
-        }
+        fi
 
         # 获取已安装的插件列表
         mapfile -t plugin_dirs < <(find "$PLUGIN_ROOT" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
@@ -450,7 +450,7 @@ plugin_uninstall_menu() {
             echo -e "${YELLOW}${BOLD}>> 📭 未检测到已安装的插件${NC}"
             press_any_key
             break
-        }
+        fi
 
         # 显示插件列表
         for i in "${!plugin_dirs[@]}"; do
@@ -464,7 +464,7 @@ plugin_uninstall_menu() {
 
         if [[ "$idx" == "0" ]]; then
             break
-        }
+        fi
 
         if [[ "$idx" =~ ^[1-9][0-9]*$ ]] && [ "$idx" -le "${#plugin_dirs[@]}" ]; then
             plugin_name=$(basename "${plugin_dirs[$((idx-1))]}")

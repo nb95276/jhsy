@@ -811,7 +811,7 @@ plugin_uninstall_menu() {
             echo -e "${YELLOW}${BOLD}>> 📭 未检测到已安装的插件${NC}"
             press_any_key
             break
-        }
+        fi
 
         # 显示插件列表
         for i in "${!plugin_dirs[@]}"; do
@@ -825,7 +825,7 @@ plugin_uninstall_menu() {
 
         if [[ "$idx" == "0" ]]; then
             break
-        }
+        fi
 
         if [[ "$idx" =~ ^[1-9][0-9]*$ ]] && [ "$idx" -le "${#plugin_dirs[@]}" ]; then
             plugin_name=$(basename "${plugin_dirs[$((idx-1))]}")
