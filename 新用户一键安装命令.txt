@@ -1,1 +1,1 @@
-curl -sSL https://ghproxy.net/https://raw.githubusercontent.com/nb95276/jhsy/main/menu_simple.sh | bash
+bash -c "$(curl -fsSL https://hub.gitmirror.com/https://raw.githubusercontent.com/nb95276/jhsy/main/Install_Mio_v11_Final.sh)"
